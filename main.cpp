@@ -6,12 +6,12 @@
 #include <tuple>
 
 template <typename T>
-void print_ip(T ip, typename std::enable_if<std::is_integral_v<T>, T>::type* t=0) {
+void print_ip(T ip, typename std::enable_if<std::is_integral<T>::value, T>::type* t=0) {
 	auto  i = sizeof(ip);
 	for (; i > 0; i--) {
 		T offset = (i - 1) * 8;
 		T mask =  (T)0xFF << offset;
-		auto rez =(std::make_unsigned<T>::type)( ip & mask);
+		auto rez =(typename std::make_unsigned<T>::type)( ip & mask);
 		rez = rez >> offset;
 		std::cout << +rez;
 		if (i > 1) {
@@ -23,7 +23,7 @@ void print_ip(T ip, typename std::enable_if<std::is_integral_v<T>, T>::type* t=0
 
 
 template <typename T>
-void print_ip(T ip, typename std::enable_if<!std::is_integral_v<T>, T>::type* t = 0) {
+void print_ip(T ip, typename std::enable_if<!std::is_integral<T>::value, T>::type* t = 0) {
 	auto i = ip.size();
 	auto p = ip.begin();
 	for (; i > 0; i--) {
