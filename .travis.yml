@@ -5,6 +5,7 @@ before_script:
   - echo "deb http://archive.ubuntu.com/ubuntu xenial main universe" | sudo tee -a /etc/apt/sources.list
   - sudo apt-get update -qq
   - sudo apt-get install libspdlog-dev -y
+  - sudo apt-get install doxygen
 script:
 - cmake .
 - cmake --build .
@@ -19,5 +20,5 @@ deploy:
     branch: master
   script:
   - curl -T print_ip-0.0.$TRAVIS_BUILD_NUMBER-Linux.deb -urejdok:$BINTRAY_API_KEY "https://api.bintray.com/content/rejdok/OTUS/print_ip/$TRAVIS_BUILD_NUMBER/print_ip-0.0.$TRAVIS_BUILD_NUMBER-Linux.deb;deb_distribution=trusty;deb_component=main;deb_architecture=amd64;publish=1"
-  - doxygen Doxyfile
+  - doxygen ./Doxyfile
   
