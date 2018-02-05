@@ -11,8 +11,10 @@ script:
 - cmake .
 - cmake --build .
 - cmake --build . --target package
+before_deploy:
+  - doxygen ./Doxyfile
 deploy:
-  provider: script
+  provider: pages
   skip_cleanup: true
   github-token: $GITHUB_TOKEN  # 
   keep-history: true
@@ -21,5 +23,5 @@ deploy:
     branch: master
   script:
   - curl -T print_ip-0.0.$TRAVIS_BUILD_NUMBER-Linux.deb -urejdok:$BINTRAY_API_KEY "https://api.bintray.com/content/rejdok/OTUS/print_ip/$TRAVIS_BUILD_NUMBER/print_ip-0.0.$TRAVIS_BUILD_NUMBER-Linux.deb;deb_distribution=trusty;deb_component=main;deb_architecture=amd64;publish=1"
-  - doxygen ./Doxyfile
+
   
