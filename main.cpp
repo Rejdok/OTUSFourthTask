@@ -4,14 +4,15 @@
 #include <list>
 #include <string>
 #include <tuple>
-
+template <typename ...Args>
+void print_ip(Args...);
 template <typename T>
-void print_ip(T ip, typename std::enable_if<std::is_integral<T>::value, T>::type* t=0) {
+void print_ip(T ip, typename std::enable_if<std::is_integral_v<T>, T>::type* t=0) {
 	auto  i = sizeof(ip);
 	for (; i > 0; i--) {
 		T offset = (i - 1) * 8;
 		T mask =  (T)0xFF << offset;
-		auto rez =(typename std::make_unsigned<T>::type)( ip & mask);
+		auto rez =(std::make_unsigned<T>::type)( ip & mask);
 		rez = rez >> offset;
 		std::cout << +rez;
 		if (i > 1) {
@@ -21,9 +22,13 @@ void print_ip(T ip, typename std::enable_if<std::is_integral<T>::value, T>::type
 	std::cout << std::endl;
 }
 
+template <>
+void print_ip<std::string>(std::string ip) {
+	std::cout << ip << std::endl;
+}
 
 template <typename T>
-void print_ip(T ip, typename std::enable_if<!std::is_integral<T>::value, T>::type* t = 0) {
+void print_ip(T ip, typename std::enable_if<!std::is_integral_v<T>&&!std::is_same<T,std::string>::value, T>::type* t = 0) {
 	auto i = ip.size();
 	auto p = ip.begin();
 	for (; i > 0; i--) {
@@ -34,10 +39,6 @@ void print_ip(T ip, typename std::enable_if<!std::is_integral<T>::value, T>::typ
 		p = std::next(p);
 	}
 	std::cout << std::endl;
-}
-
-void print_ip( std::string ip) {
-	std::cout << ip << std::endl;
 }
 
 template <typename T,typename ...Args>
