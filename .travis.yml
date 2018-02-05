@@ -6,6 +6,7 @@ before_script:
   - sudo apt-get update -qq
   - sudo apt-get install libspdlog-dev -y
   - sudo apt-get install doxygen
+  - sudo apt-get upgrade
 script:
 - cmake .
 - cmake --build .
