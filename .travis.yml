@@ -1,5 +1,10 @@
 language: cpp
 compiler: clang
+stages:
+    - build
+    - deploy_to_pages
+    - deploy_to_bintray
+
 jobs:
   include:
     -stage: build
