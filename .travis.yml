@@ -18,7 +18,7 @@ deploy:
   skip_cleanup: true
   github-token: $GITHUB_TOKEN  # 
   keep-history: true
-  local-dir: DoxygenOut/html/
+  local-dir: DoxygenOutput/html/
   on:
     branch: master
   script:
