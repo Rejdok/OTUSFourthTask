@@ -14,7 +14,6 @@ script:
   - cmake .
   - cmake --build .
   - cmake --build . --target package
-  - stage: deploy_to_pages
 deploy:
   provider: pages
   skip_cleanup: true
