@@ -10,12 +10,12 @@ void print_ip(Args...);
 
 
 template <typename T>
-void print_ip(T ip, typename std::enable_if<std::is_integral<T>::value, T>::type* t=0) {
+void print_ip(T ip, typename std::enable_if<std::is_integral<T>::value, T>::type* t = 0) {
 	auto  i = sizeof(ip);
 	for (; i > 0; i--) {
 		T offset = (i - 1) * 8;
-		T mask =  (T)0xFF << offset;
-		auto rez =(typename std::make_unsigned<T>::type)( ip & mask);
+		T mask = (T)0xFF << offset;
+		auto rez = (typename std::make_unsigned<T>::type)(ip & mask);
 		rez = rez >> offset;
 		std::cout << +rez;
 		if (i > 1) {
@@ -24,11 +24,33 @@ void print_ip(T ip, typename std::enable_if<std::is_integral<T>::value, T>::type
 	}
 	std::cout << std::endl;
 }
+template<typename T, typename _ = void>
+struct isContainer : std::false_type {};
 
+template<typename... Ts>
+struct is_container_helper {};
 
-template <typename T,Args...>
-void print_ip(T<Args...> ip, typename std::enable_if<std::is_Same<T<Args...>,std::vector<Args...>::value
-||std::is_Same<T<Args...>,std::list<Args...>::value>::value, T>::type* t = 0) {
+template<typename T>
+struct isContainer<
+	T,
+	std::conditional_t<
+	false,
+	is_container_helper<
+	typename T::value_type,
+	typename T::size_type,
+	typename T::allocator_type,
+	typename T::iterator,
+	typename T::const_iterator,
+	decltype(std::declval<T>().size()),
+	decltype(std::declval<T>().begin()),
+	decltype(std::declval<T>().end()),
+	decltype(std::declval<T>().cbegin()),
+	decltype(std::declval<T>().cend())
+	>,
+	void
+	> > : public std::true_type{};
+template <typename T>
+void print_ip(T ip,typename std::enable_if<isContainer<T>::value&&!std::is_same<std::string,T>::value, T>::type* t = 0) {
 	auto i = ip.size();
 	auto p = ip.begin();
 	for (; i > 0; i--) {
@@ -46,15 +68,15 @@ void print_ip<std::string>(std::string ip) {
 	std::cout << ip << std::endl;
 }
 
-template <typename T,typename ...Args>
+template <typename T, typename ...Args>
 struct allTypesEqalsFirst;
 
 template <typename T, typename ...Args>
-struct allTypesEqalsFirst<T, T, Args...>:allTypesEqalsFirst<T, Args...> {};
+struct allTypesEqalsFirst<T, T, Args...> :allTypesEqalsFirst<T, Args...> {};
 template <typename T>
 struct allTypesEqalsFirst<T> : std::true_type {};
-template <typename T, typename U,typename ...Args>
-struct allTypesEqalsFirst<T, U, Args...>: std::false_type{};
+template <typename T, typename U, typename ...Args>
+struct allTypesEqalsFirst<T, U, Args...> : std::false_type {};
 
 
 template<int index, typename Callback, typename... Args>
@@ -87,12 +109,12 @@ void for_each(std::tuple<Args...>& t, Callback callback)
 	iterate_tuple<t_size - 1, Callback, Args...>::next(t, callback);
 }
 template<typename T, typename ...Args>
-void print_ip(std::tuple<T,Args...> ip) {
-	static_assert(allTypesEqalsFirst<T,Args...>::value, "All values in tuple must be same type");
-	auto tupleSize =std::tuple_size<std::tuple<T,Args...>>::value;
+void print_ip(std::tuple<T, Args...> ip) {
+	static_assert(allTypesEqalsFirst<T, Args...>::value, "All values in tuple must be same type");
+	auto tupleSize = std::tuple_size<std::tuple<T, Args...>>::value;
 	for_each(ip, [&](int index, T& val) {
 		std::cout << val;
-		if (index != tupleSize-1) {
+		if (index != tupleSize - 1) {
 			std::cout << ".";
 		}
 	});
@@ -109,6 +131,5 @@ int main()
 	print_ip(std::list<int>(p.begin(), p.end()));
 	print_ip(std::string({ "127.123.123.123" }));
 	print_ip(std::tuple<int, int, int>(10, 20, 30));
-    return 0;
+	return 0;
 }
-
