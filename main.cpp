@@ -26,8 +26,9 @@ void print_ip(T ip, typename std::enable_if<std::is_integral<T>::value, T>::type
 }
 
 
-template <typename T>
-void print_ip(T ip, typename std::enable_if<!std::is_integral<T>::value, T>::type* t = 0) {
+template <typename T,Args...>
+void print_ip(T<Args...> ip, typename std::enable_if<std::is_Same<T<Args...>,std::vector<Args...>::value
+||std::is_Same<T<Args...>,std::list<Args...>::value>::value, T>::type* t = 0) {
 	auto i = ip.size();
 	auto p = ip.begin();
 	for (; i > 0; i--) {
